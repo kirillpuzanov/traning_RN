@@ -1,28 +1,18 @@
-import React from "react";
-import {FlatList, StyleSheet, View} from 'react-native';
-import {DATA} from "../data";
-import {Post} from "../components/Post";
+import React, {useEffect} from "react";
+import {PostCollection} from "../components/PostCollection";
+import {blogActions} from "../bll/blogReducer";
+import {useDispatch} from "react-redux";
 
 
 export const MainScreen = ({navigation}) => {
 
-   const openPostHandler = post => {
-      navigation.navigate('PostStackNavigator', {screen:'Post', params: {postId: post.id, postDate: post.date, booked: post.booked}})
-   }
+   const dispatch = useDispatch()
+   useEffect(() => {
+      dispatch(blogActions.loadPosts())
+   }, [])
 
-   return (
-       <View style={styles.wrap}>
-          <FlatList data={DATA}
-                    keyExtractor={post => post.id.toString()}
-                    renderItem={({item}) => <Post post={item} onOpen={openPostHandler}/>}/>
-       </View>
-   )
+   // влаг main для понимания какую коллекцию отрисовывать в переиспользуемой компоненте PostCollection,
+   // main={true} значит для MainScreen (отрисовываем все посты), main={false} - для BookedScreen  отфильров-ые посты
+   return <PostCollection navigation={navigation} main={true}/>
 }
 
-
-const styles = StyleSheet.create({
-   wrap: {
-      flex: 1,
-      padding: 20,
-   }
-})

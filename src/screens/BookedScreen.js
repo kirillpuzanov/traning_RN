@@ -1,20 +1,13 @@
 import React from "react";
-import {Text, View,StyleSheet} from 'react-native';
+import {PostCollection} from "../components/PostCollection";
 
 
-export const BookedScreen = () => {
+export const BookedScreen = ({navigation}) => <PostCollection navigation={navigation} main={false}/>
 
-   return (
-       <View>
-          <Text> Booked Screen </Text>
-       </View>
-   )
-}
-
-const styles = StyleSheet.create({
-   center: {
-      flex:1,
-      justifyContent:'center',
-      alignItems:'center'
-   }
-})
+// const styles = StyleSheet.create({
+//    center: {
+//       flex:1,
+//       justifyContent:'center',
+//       alignItems:'center'
+//    }
+// })

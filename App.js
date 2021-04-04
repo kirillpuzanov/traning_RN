@@ -1,9 +1,15 @@
 import React from 'react';
 import {AppNavigation} from "./src/nav/appNav";
+import {Provider} from "react-redux";
+import {store} from "./src/bll/store";
 
 export default function App() {
 
-   return <AppNavigation/>
+   return (
+       <Provider store={store}>
+          <AppNavigation/>
+       </Provider>
+   )
 }
 
 

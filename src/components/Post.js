@@ -16,6 +16,8 @@ export const Post = ({post,onOpen}) => {
        </TouchableOpacity>
    )
 }
+
+
 const styles = StyleSheet.create({
    wrap: {
       marginBottom: 15,
@@ -36,3 +38,5 @@ const styles = StyleSheet.create({
       fontFamily: 'OpenSansRegular'
    }
 })
+
+

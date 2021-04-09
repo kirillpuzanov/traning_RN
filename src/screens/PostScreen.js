@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect} from 'react';
-import {Alert, Button, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, Button, Image, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {THEME} from '../theme';
 import {useDispatch, useSelector} from 'react-redux';
 import {blogActions} from '../bll/blogReducer';
@@ -11,8 +11,15 @@ export const PostScreen = ({navigation, route}) => {
 
    const dispatch = useDispatch()
    const postId = route.params.postId
-   const allPost = useSelector(s => s.posts.allPosts)
-   const post = allPost.find(el => el.id === postId)
+   const post = useSelector(s => s.posts.allPosts.find(el => el.id === postId))
+   const booked = useSelector(s => s.posts.bookedPosts.some(el => el.id === postId))
+   const [editMode, setEditMode] = useState(false)
+   const [newText, setNewText] = useState('')
+
+   const saveNewPostText = () => {
+      dispatch(blogActions.updatePostText(newText, postId))
+      setEditMode(false)
+   }
 
    const toggleBooked = useCallback(() => {
       dispatch(blogActions.toggleBooked(postId))
@@ -25,14 +32,13 @@ export const PostScreen = ({navigation, route}) => {
          title: 'Пост от ' + new Date(route.params.postDate).toLocaleDateString(),
          headerRight: () => (
              <HeaderButtons HeaderButtonComponent={HeaderIcon}>
-                <Item title='Take Photo'
-                      iconName={post.booked ? 'ios-star' : 'ios-star-outline'}
+                <Item title="Take Photo"
+                      iconName={booked ? 'ios-star' : 'ios-star-outline'}
                       onPress={toggleBooked}/>
              </HeaderButtons>
          )
       })
-   }, [toggleBooked, post.booked])
-
+   }, [toggleBooked, booked])
 
    const onRemoveHandler = () => {
       return Alert.alert(
@@ -46,21 +52,34 @@ export const PostScreen = ({navigation, route}) => {
              },
              {
                 text: 'Удалить',
-                onPress: () => console.log('Удалить'),
+                onPress: () => {
+                   navigation.navigate('Main')
+                   dispatch(blogActions.removePost(postId))
+                },
                 style: 'destructive'
              }
-          ]
+          ],
+          {cancelable: false}
       )
    }
-
+   if (!post) return null
    return (
-
        <ScrollView>
-          {console.log('zsdsad')}
           <Image style={styles.img} source={{uri: post.img}}/>
-          <View style={styles.wrap}>
-             <Text style={styles.title}>{post.text}</Text>
-          </View>
+          {editMode
+              ? <View style={styles.wrap}>
+                 <TextInput style={styles.title} selectable={true}
+                            placeholder={'Введите новые текст поста...'}
+                            onChangeText={setNewText}
+                            onBlur={saveNewPostText}/>
+              </View>
+
+              : <View style={styles.wrap}>
+                 <Text style={styles.title} selectable={true}
+                       onLongPress={() => setEditMode(true)}>{post.text}</Text>
+              </View>
+          }
+
           <Button title={'Удалить'} onPress={onRemoveHandler} color={THEME.DANGER_COLOR}/>
        </ScrollView>
    )
@@ -72,7 +91,7 @@ const styles = StyleSheet.create({
       height: 200
    },
    wrap: {
-      padding: 10
+      margin: 20
    },
    title: {
       fontFamily: 'OpenSansRegular'

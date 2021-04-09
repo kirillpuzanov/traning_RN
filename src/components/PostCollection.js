@@ -1,5 +1,5 @@
 import React from "react";
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {Post} from "./Post";
 import {useSelector} from "react-redux";
 
@@ -17,6 +17,7 @@ export const PostCollection = ({navigation, main}) => {
    }
 
    const data = main ? allPosts : bookedPosts
+   if(!data) return<View><Text> Список пуст ... </Text></View>
    return (
        <View style={styles.wrap}>
           <FlatList data={data}
